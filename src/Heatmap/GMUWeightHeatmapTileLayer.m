@@ -83,7 +83,13 @@ static void FreeDataProviderData(void *info, const void *data, size_t size) { fr
 }
 
 - (void)setGradient:(GMUGradient *)gradient {
-    _gradient = gradient;
+     UIColor *newObject = [[[gradient colors] firstObject]  colorWithAlphaComponent:0];
+     NSMutableArray *colors = [[NSMutableArray alloc] initWithArray:gradient.colors];
+     [colors removeObjectAtIndex:0];
+     [colors insertObject:newObject atIndex:0];
+     _gradient = [[GMUGradient alloc] initWithColors:colors
+                                         startPoints:gradient.startPoints
+                                        colorMapSize:gradient.mapSize];
     _dirty = YES;
 }
 
@@ -343,8 +349,7 @@ static void FreeDataProviderData(void *info, const void *data, size_t size) { fr
                 rawpixels[index] = (((uint32_t)(alpha * 255)) << 24) + (((uint32_t)(blue * 255)) << 16) +
                 (((uint32_t)(green * 255)) << 8) + ((uint32_t)(red * 255));
             } else {
-                rawpixels[index] = (((uint32_t)(0 * 255)) << 24) + (((uint32_t)(0 * 255)) << 16) +
-                (((uint32_t)(0 * 255)) << 8) + ((uint32_t)(0 * 255));
+                rawpixels[index] = 0;
             }
         }
     }
